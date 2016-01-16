@@ -168,7 +168,7 @@ public class MapApp extends Application
 	@Override
 	public void mapInitialized() {
 
-		LatLong center = new LatLong(32.8810, -117.2380);
+		LatLong center = new LatLong(43.7658375,-79.5063046);
 
 
 		// set map options
