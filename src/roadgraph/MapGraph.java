@@ -338,6 +338,7 @@ public class MapGraph {
 				continue;
 
 			visited.add(current);
+			nodeSearched.accept(current);
 			if (current.equals(goal))
 				return true;
 
@@ -353,19 +354,16 @@ public class MapGraph {
 					}
 				}
 			}
-
-			nodeSearched.accept(current);
 		}
 
 		return false;
 	}
 
 	private MapRoadEdge getRoadTo(MapRoadNode from, MapRoadNode to) {
-		for (MapRoadEdge road : map.get(from)) {
-			GeographicPoint currentTo = road.getTo();
-			if (currentTo.equals(to))
+		for (MapRoadEdge road : map.get(from))
+			if (road.getTo().equals(to))
 				return road;
-		}
+
 		return null;
 	}
 
@@ -390,6 +388,7 @@ public class MapGraph {
 				continue;
 
 			visited.add(current);
+			nodeSearched.accept(current);
 			if (current.equals(goal))
 				return true;
 
@@ -405,8 +404,6 @@ public class MapGraph {
 					}
 				}
 			}
-
-			nodeSearched.accept(current);
 		}
 
 		return false;
