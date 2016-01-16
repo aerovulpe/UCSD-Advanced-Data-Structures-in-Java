@@ -120,9 +120,9 @@ public class MapGraph {
 		if (!map.containsKey(from))
 			throw new IllegalArgumentException("Both points must be present!");
 
-		for (MapRoadNode toKey : map.keySet())
-			if (toKey.equals(to)) {
-				map.get(from).add(new MapRoadEdge(toKey, roadName, roadType, length));
+		for (MapRoadNode node : map.keySet())
+			if (node.equals(to)) {
+				map.get(from).add(new MapRoadEdge(node, roadName, roadType, length));
 				numEdges++;
 				return;
 			}
@@ -226,18 +226,19 @@ public class MapGraph {
 		}
 
 		HashMap<GeographicPoint, GeographicPoint> parentMap = new HashMap<>();
+		MapRoadNode startNode = null;
 
 		// Treat Dijkstra's algorithm as special instance of A* where h(n) = 0.
 		for (MapRoadNode node : map.keySet()) {
 			if (node.equals(start)) {
-				start = node;
+				startNode = node;
 				node.setDistanceFromStartNode(0);
 			} else
 				node.setDistanceFromStartNode(Double.POSITIVE_INFINITY);
 			node.setStraightDistanceToGoalNode(0);
 		}
 
-		if (!aStarSearch(start, goal, parentMap, nodeSearched)) {
+		if (!aStarSearch(startNode, goal, parentMap, nodeSearched)) {
 			System.out.println("No path exists");
 			return null;
 		}
@@ -288,18 +289,19 @@ public class MapGraph {
 		}
 
 		HashMap<GeographicPoint, GeographicPoint> parentMap = new HashMap<>();
+		MapRoadNode startNode = null;
 
 		// Prepare vertices for search.
 		for (MapRoadNode node : map.keySet()) {
 			if (node.equals(start)) {
-				start = node;
+				startNode = node;
 				node.setDistanceFromStartNode(0);
 			} else
 				node.setDistanceFromStartNode(Double.POSITIVE_INFINITY);
 			node.setStraightDistanceToGoalNode(goal);
 		}
 
-		if (!aStarSearch(start, goal, parentMap, nodeSearched)) {
+		if (!aStarSearch(startNode, goal, parentMap, nodeSearched)) {
 			System.out.println("No path exists");
 			return null;
 		}
@@ -330,19 +332,19 @@ public class MapGraph {
 		return false;
 	}
 
-	private List<GeographicPoint> getNeighbors(GeographicPoint point) {
-		List<GeographicPoint> neighbors = new ArrayList<>();
+	private List<MapRoadNode> getNeighbors(GeographicPoint point) {
+		List<MapRoadNode> neighbors = new ArrayList<>();
 		for (MapRoadEdge edge : map.get(point))
 			neighbors.add(edge.getTo());
 		return neighbors;
 	}
 
-	private boolean aStarSearch(GeographicPoint start, GeographicPoint goal,
+	private boolean aStarSearch(MapRoadNode start, GeographicPoint goal,
 			HashMap<GeographicPoint, GeographicPoint> parentMap, Consumer<GeographicPoint> nodeSearched) {
 		HashSet<MapRoadNode> visited = new HashSet<>();
 		PriorityQueue<MapRoadNode> toExplore = new PriorityQueue<>();
 
-		toExplore.add((MapRoadNode) start);
+		toExplore.add(start);
 
 		while (!toExplore.isEmpty()) {
 			MapRoadNode current = toExplore.remove();
@@ -354,14 +356,13 @@ public class MapGraph {
 			if (current.equals(goal))
 				return true;
 
-			for (GeographicPoint neighbor : getNeighbors(current)) {
+			for (MapRoadNode neighbor : getNeighbors(current)) {
 				if (!visited.contains(neighbor)) {
-					MapRoadNode neighborRef = (MapRoadNode) neighbor;
 					double distance;
 					if ((distance = current.getDistanceFromStartNode()
-							+ getRoadTo(current, neighborRef).getLength()) < neighborRef.getDistanceFromStartNode()) {
-						neighborRef.setDistanceFromStartNode(distance);
-						toExplore.add(neighborRef);
+							+ getRoadTo(current, neighbor).getLength()) < neighbor.getDistanceFromStartNode()) {
+						neighbor.setDistanceFromStartNode(distance);
+						toExplore.add(neighbor);
 						parentMap.put(neighbor, current);
 					}
 				}
