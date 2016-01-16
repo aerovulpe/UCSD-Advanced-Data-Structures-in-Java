@@ -29,7 +29,7 @@ public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNo
 	}
 
 	void setStraightDistanceToGoalNode(GeographicPoint goal) {
-		this.straightDistanceToGoalNode = Math.abs(distance(goal));
+		this.straightDistanceToGoalNode = distance(goal);
 	}
 
 	void setStraightDistanceToGoalNode(double distance) {
@@ -38,15 +38,6 @@ public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNo
 
 	@Override
 	public int compareTo(MapRoadNode o) {
-		// System.out.println(this + " : g(n) = " + distanceFromStartNode);
-		// System.out.println(this + " : h(n) = " + straightDistanceToGoalNode);
-		// System.out.println(this + " : f(n) = " + (distanceFromStartNode +
-		// straightDistanceToGoalNode));
-		// System.out.println(o + " : g(n) = " + o.distanceFromStartNode);
-		// System.out.println(o + " : h(n) = " + o.straightDistanceToGoalNode);
-		// System.out.println(o + " : f(n) = " + (o.distanceFromStartNode +
-		// o.straightDistanceToGoalNode));
-
 		double result = (distanceFromStartNode + straightDistanceToGoalNode)
 				- (o.distanceFromStartNode + o.straightDistanceToGoalNode);
 		return result < 0 ? -1 : result == 0 ? 0 : 1;
