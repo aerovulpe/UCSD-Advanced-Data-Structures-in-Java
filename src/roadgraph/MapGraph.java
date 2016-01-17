@@ -348,11 +348,11 @@ public class MapGraph {
 				return true;
 
 			Map<MapRoadEdge, MapRoadNode> neighbors = getNeighbors(current);
-			for (MapRoadEdge neighborEdge : neighbors.keySet()) {
-				MapRoadNode neighbor = neighbors.get(neighborEdge);
+			for (Map.Entry<MapRoadEdge, MapRoadNode> neighborEntry : neighbors.entrySet()) {
+				MapRoadNode neighbor = neighborEntry.getValue();
 				if (!visited.contains(neighbor)) {
 					double distance;
-					if ((distance = current.getDistanceFromStartNode() + neighborEdge.getLength()) < neighbor
+					if ((distance = current.getDistanceFromStartNode() + neighborEntry.getKey().getLength()) < neighbor
 							.getDistanceFromStartNode()) {
 						neighbor.setDistanceFromStartNode(distance);
 						toExplore.add(neighbor);
