@@ -32,14 +32,14 @@ public class MapGraph {
 	// Add your member variables here in WEEK 2
 	private int numVertices;
 	private int numEdges;
-	private Map<MapRoadNode, List<MapRoadEdge>> map;
+	private Map<GeographicPoint, MapRoadNode> vertices;
 
 	/**
 	 * Create a new empty MapGraph
 	 */
 	public MapGraph() {
 		// Implement in this constructor in WEEK 2
-		map = new HashMap<>();
+		vertices = new HashMap<>();
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class MapGraph {
 	 */
 	public Set<GeographicPoint> getVertices() {
 		// Implement this method in WEEK 2
-		return new HashSet<>(map.keySet());
+		return new HashSet<>(vertices.values());
 	}
 
 	/**
@@ -84,10 +84,10 @@ public class MapGraph {
 	 */
 	public boolean addVertex(GeographicPoint location) {
 		// Implement this method in WEEK 2
-		if (location == null || map.containsKey(location))
+		if (location == null || vertices.containsKey(location))
 			return false;
 
-		map.put(MapRoadNode.fromGeographicPoint(location), new ArrayList<>());
+		vertices.put(location, MapRoadNode.fromGeographicPoint(location));
 		numVertices++;
 
 		return true;
@@ -117,17 +117,11 @@ public class MapGraph {
 
 		// Implement this method in WEEK 2
 
-		if (!map.containsKey(from))
+		if (!(vertices.containsKey(from) && vertices.containsKey(to)))
 			throw new IllegalArgumentException("Both points must be present!");
 
-		for (MapRoadNode node : map.keySet())
-			if (node.equals(to)) {
-				map.get(from).add(new MapRoadEdge(node, roadName, roadType, length));
-				numEdges++;
-				return;
-			}
-
-		throw new IllegalArgumentException("Both points must be present!");
+		vertices.get(from).addEdge(vertices.get(to), roadName, roadType, length);
+		numEdges++;
 	}
 
 	/**
@@ -229,7 +223,7 @@ public class MapGraph {
 		MapRoadNode startNode = null;
 
 		// Treat Dijkstra's algorithm as special instance of A* where h(n) = 0.
-		for (MapRoadNode node : map.keySet()) {
+		for (MapRoadNode node : vertices.values()) {
 			if (node.equals(start)) {
 				startNode = node;
 				node.setDistanceFromStartNode(0);
@@ -292,7 +286,7 @@ public class MapGraph {
 		MapRoadNode startNode = null;
 
 		// Prepare vertices for search.
-		for (MapRoadNode node : map.keySet()) {
+		for (MapRoadNode node : vertices.values()) {
 			if (node.equals(start)) {
 				startNode = node;
 				node.setDistanceFromStartNode(0);
@@ -334,7 +328,7 @@ public class MapGraph {
 
 	private List<MapRoadNode> getNeighbors(GeographicPoint point) {
 		List<MapRoadNode> neighbors = new ArrayList<>();
-		for (MapRoadEdge edge : map.get(point))
+		for (MapRoadEdge edge : vertices.get(point).getEdges())
 			neighbors.add(edge.getTo());
 		return neighbors;
 	}
@@ -356,7 +350,7 @@ public class MapGraph {
 			if (current.equals(goal))
 				return true;
 
-			for (MapRoadNode neighbor : getNeighbors(current)) {
+			for (MapRoadNode neighbor : getNeighbors(current))
 				if (!visited.contains(neighbor)) {
 					double distance;
 					if ((distance = current.getDistanceFromStartNode()
@@ -366,14 +360,13 @@ public class MapGraph {
 						parentMap.put(neighbor, current);
 					}
 				}
-			}
 		}
 
 		return false;
 	}
 
 	private MapRoadEdge getRoadTo(MapRoadNode from, MapRoadNode to) {
-		for (MapRoadEdge road : map.get(from))
+		for (MapRoadEdge road : vertices.get(from).getEdges())
 			if (road.getTo().equals(to))
 				return road;
 

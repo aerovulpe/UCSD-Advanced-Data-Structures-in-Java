@@ -1,5 +1,8 @@
 package roadgraph;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import geography.GeographicPoint;
 
 /**
@@ -9,6 +12,7 @@ import geography.GeographicPoint;
 public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNode> {
 
 	private static final long serialVersionUID = -8732196262810800084L;
+	private List<MapRoadEdge> edges = new ArrayList<>();
 	private double distanceFromStartNode;
 	private double straightDistanceToGoalNode;
 
@@ -18,6 +22,18 @@ public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNo
 
 	public static MapRoadNode fromGeographicPoint(GeographicPoint point) {
 		return new MapRoadNode(point.x, point.y);
+	}
+
+	void addEdge(MapRoadNode to, String roadName, String roadType, double length) {
+		edges.add(new MapRoadEdge(to, roadName, roadType, length));
+	}
+
+	List<MapRoadEdge> getEdges() {
+		return edges;
+	}
+
+	int numOfEdges() {
+		return edges.size();
 	}
 
 	double getDistanceFromStartNode() {
