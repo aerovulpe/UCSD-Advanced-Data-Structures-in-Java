@@ -32,6 +32,10 @@ public class MapGraph {
 	// Add your member variables here in WEEK 2
 	private int numVertices;
 	private int numEdges;
+	
+	// Use a Map to map the semantic values of our vertices 
+	// to the actual vertex objects used in our graph that
+	// also contain their edges references.
 	private Map<GeographicPoint, MapRoadNode> vertices;
 
 	/**
@@ -87,7 +91,8 @@ public class MapGraph {
 		if (location == null || vertices.containsKey(location))
 			return false;
 
-		vertices.put(location, MapRoadNode.fromGeographicPoint(location));
+		MapRoadNode locationNode = MapRoadNode.fromGeographicPoint(location);
+		vertices.put(locationNode, locationNode);
 		numVertices++;
 
 		return true;
