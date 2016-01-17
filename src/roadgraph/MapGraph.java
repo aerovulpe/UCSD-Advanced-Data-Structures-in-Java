@@ -7,7 +7,6 @@
  */
 package roadgraph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,8 +31,8 @@ public class MapGraph {
 	// Add your member variables here in WEEK 2
 	private int numVertices;
 	private int numEdges;
-	
-	// Use a Map to map the semantic values of our vertices 
+
+	// Use a Map to map the semantic values of our vertices
 	// to the actual vertex objects used in our graph that
 	// also contain their edges references.
 	private Map<GeographicPoint, MapRoadNode> vertices;
@@ -321,7 +320,7 @@ public class MapGraph {
 			if (current.equals(goal))
 				return true;
 
-			for (GeographicPoint neighbor : getNeighbors(current))
+			for (GeographicPoint neighbor : getNeighbors(current).values())
 				if (!visited.contains(neighbor)) {
 					toExplore.add(neighbor);
 					parentMap.put(neighbor, current);
@@ -329,13 +328,6 @@ public class MapGraph {
 		}
 
 		return false;
-	}
-
-	private List<MapRoadNode> getNeighbors(GeographicPoint point) {
-		List<MapRoadNode> neighbors = new ArrayList<>();
-		for (MapRoadEdge edge : vertices.get(point).getEdges())
-			neighbors.add(edge.getTo());
-		return neighbors;
 	}
 
 	private boolean aStarSearch(MapRoadNode start, GeographicPoint goal,
@@ -355,27 +347,30 @@ public class MapGraph {
 			if (current.equals(goal))
 				return true;
 
-			for (MapRoadNode neighbor : getNeighbors(current))
+			Map<MapRoadEdge, MapRoadNode> neighbors = getNeighbors(current);
+			for (MapRoadEdge neighborEdge : neighbors.keySet()) {
+				MapRoadNode neighbor = neighbors.get(neighborEdge);
 				if (!visited.contains(neighbor)) {
 					double distance;
-					if ((distance = current.getDistanceFromStartNode()
-							+ getRoadTo(current, neighbor).getLength()) < neighbor.getDistanceFromStartNode()) {
+					if ((distance = current.getDistanceFromStartNode() + neighborEdge.getLength()) < neighbor
+							.getDistanceFromStartNode()) {
 						neighbor.setDistanceFromStartNode(distance);
 						toExplore.add(neighbor);
 						parentMap.put(neighbor, current);
 					}
 				}
+			}
 		}
 
 		return false;
 	}
 
-	private MapRoadEdge getRoadTo(MapRoadNode from, MapRoadNode to) {
-		for (MapRoadEdge road : vertices.get(from).getEdges())
-			if (road.getTo().equals(to))
-				return road;
+	private Map<MapRoadEdge, MapRoadNode> getNeighbors(GeographicPoint point) {
+		Map<MapRoadEdge, MapRoadNode> neighbors = new HashMap<>();
+		for (MapRoadEdge edge : vertices.get(point).getEdges())
+			neighbors.put(edge, edge.getTo());
 
-		return null;
+		return neighbors;
 	}
 
 	private static List<GeographicPoint> constructPath(GeographicPoint start, GeographicPoint goal,
