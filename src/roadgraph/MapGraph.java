@@ -320,11 +320,13 @@ public class MapGraph {
 			if (current.equals(goal))
 				return true;
 
-			for (GeographicPoint neighbor : getNeighbors(current).values())
+			for (MapRoadEdge neighborEdge : getNeighbors(current)) {
+				MapRoadNode neighbor = neighborEdge.getTo();
 				if (!visited.contains(neighbor)) {
 					toExplore.add(neighbor);
 					parentMap.put(neighbor, current);
 				}
+			}
 		}
 
 		return false;
@@ -347,12 +349,11 @@ public class MapGraph {
 			if (current.equals(goal))
 				return true;
 
-			Map<MapRoadEdge, MapRoadNode> neighbors = getNeighbors(current);
-			for (Map.Entry<MapRoadEdge, MapRoadNode> neighborEntry : neighbors.entrySet()) {
-				MapRoadNode neighbor = neighborEntry.getValue();
+			for (MapRoadEdge neighborEdge : getNeighbors(current)) {
+				MapRoadNode neighbor = neighborEdge.getTo();
 				if (!visited.contains(neighbor)) {
 					double distance;
-					if ((distance = current.getDistanceFromStartNode() + neighborEntry.getKey().getLength()) < neighbor
+					if ((distance = current.getDistanceFromStartNode() + neighborEdge.getLength()) < neighbor
 							.getDistanceFromStartNode()) {
 						neighbor.setDistanceFromStartNode(distance);
 						toExplore.add(neighbor);
@@ -365,12 +366,8 @@ public class MapGraph {
 		return false;
 	}
 
-	private Map<MapRoadEdge, MapRoadNode> getNeighbors(GeographicPoint point) {
-		Map<MapRoadEdge, MapRoadNode> neighbors = new HashMap<>();
-		for (MapRoadEdge edge : vertices.get(point).getEdges())
-			neighbors.put(edge, edge.getTo());
-
-		return neighbors;
+	private List<MapRoadEdge> getNeighbors(GeographicPoint point) {
+		return vertices.get(point).getEdges();
 	}
 
 	private static List<GeographicPoint> constructPath(GeographicPoint start, GeographicPoint goal,
