@@ -13,8 +13,8 @@ public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNo
 
 	private static final long serialVersionUID = -8732196262810800084L;
 	private List<MapRoadEdge> edges = new ArrayList<>();
-	private double distanceFromStartNode;
-	private double straightDistanceToGoalNode;
+	private double timeFromStartNode;
+	private double straightLineTimeToGoalNode;
 
 	public MapRoadNode(double latitude, double longitude) {
 		super(latitude, longitude);
@@ -24,8 +24,8 @@ public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNo
 		return new MapRoadNode(point.x, point.y);
 	}
 
-	void addEdge(MapRoadNode to, String roadName, String roadType, double length) {
-		edges.add(new MapRoadEdge(to, roadName, roadType, length));
+	void addEdge(MapRoadNode to, String roadName, String roadType, double maxSpeed, double length) {
+		edges.add(new MapRoadEdge(to, roadName, roadType, maxSpeed, length));
 	}
 
 	List<MapRoadEdge> getEdges() {
@@ -36,26 +36,26 @@ public class MapRoadNode extends GeographicPoint implements Comparable<MapRoadNo
 		return edges.size();
 	}
 
-	double getDistanceFromStartNode() {
-		return distanceFromStartNode;
+	public double getTimeFromStartNode() {
+		return timeFromStartNode;
 	}
 
-	void setDistanceFromStartNode(double distanceFromStartNode) {
-		this.distanceFromStartNode = distanceFromStartNode;
+	void setTimeFromStartNode(double timeFromStartNode) {
+		this.timeFromStartNode = timeFromStartNode;
 	}
 
 	void setStraightDistanceToGoalNode(GeographicPoint goal) {
-		this.straightDistanceToGoalNode = distance(goal);
+		this.straightLineTimeToGoalNode = distance(goal);
 	}
 
 	void setStraightDistanceToGoalNode(double distance) {
-		this.straightDistanceToGoalNode = distance;
+		this.straightLineTimeToGoalNode = distance;
 	}
 
 	@Override
 	public int compareTo(MapRoadNode o) {
-		double result = (distanceFromStartNode + straightDistanceToGoalNode)
-				- (o.distanceFromStartNode + o.straightDistanceToGoalNode);
+		double result = (timeFromStartNode + straightLineTimeToGoalNode)
+				- (o.timeFromStartNode + o.straightLineTimeToGoalNode);
 		return result < 0 ? -1 : result == 0 ? 0 : 1;
 	}
 

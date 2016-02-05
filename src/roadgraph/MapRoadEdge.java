@@ -4,15 +4,19 @@ package roadgraph;
  * Class to represent roads as edges
  */
 public class MapRoadEdge {
-	private MapRoadNode to;
-	private String roadName;
-	private String roadType;
-	private double length;
+	private final MapRoadNode to;
+	private final String roadName;
+	private final String roadType;
+	private final double maxSpeed;
+	private final double length;
 
-	public MapRoadEdge(MapRoadNode to, String roadName, String roadType, double length) {
+	public MapRoadEdge(MapRoadNode to, String roadName, String roadType, double maxSpeed, double length) {
 		this.to = to;
 		this.roadName = roadName;
 		this.roadType = roadType;
+
+		// Use Canada's urban statutory speed limit (50 km/h) as the default maxSpeed
+		this.maxSpeed = maxSpeed == -1 ? 50 : maxSpeed;
 		this.length = length;
 	}
 
@@ -26,6 +30,10 @@ public class MapRoadEdge {
 
 	public String getRoadType() {
 		return roadType;
+	}
+
+	public double getMaxSpeed() {
+		return maxSpeed;
 	}
 
 	public double getLength() {

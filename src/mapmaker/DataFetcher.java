@@ -29,6 +29,8 @@ public class DataFetcher {
 
             InputStream is = conn.getInputStream();
             JsonReader rdr = Json.createReader(is);
+            
+           // System.out.println(rdr.readObject());
         
             return rdr.readObject();
         } catch (Exception e) {

@@ -39,7 +39,7 @@ public class FetchController {
     private String filename = "data.map";
 
     // path for mapfiles to load when program starts
-    private String persistPath = "data/maps/mapfiles.list";
+    public static final String PERSISTENT_PATH = "data/maps/mapfiles.list";
 
 
     public FetchController(GeneralService generalService, RouteService routeService, TextField writeFile,
@@ -59,7 +59,7 @@ public class FetchController {
 
     private void loadDataSets() {
     	try {
-			BufferedReader reader = new BufferedReader(new FileReader(persistPath));
+			BufferedReader reader = new BufferedReader(new FileReader(PERSISTENT_PATH));
             String line = reader.readLine();
             while(line != null) {
             	dataChoices.getItems().add(new DataSet(GeneralService.getDataSetDirectory() + line));

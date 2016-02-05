@@ -17,6 +17,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import application.MapApp;
 import geography.GeographicPoint;
 import util.GraphLoader;
 
@@ -116,15 +117,15 @@ public class MapGraph {
 	 *             graph, if any of the arguments is null, or if the length is
 	 *             less than 0.
 	 */
-	public void addEdge(GeographicPoint from, GeographicPoint to, String roadName, String roadType, double length)
-			throws IllegalArgumentException {
+	public void addEdge(GeographicPoint from, GeographicPoint to, String roadName, String roadType, double maxSpeed,
+			double length) throws IllegalArgumentException {
 
 		// Implement this method in WEEK 2
 
 		if (!(vertices.containsKey(from) && vertices.containsKey(to)))
 			throw new IllegalArgumentException("Both points must be present!");
 
-		vertices.get(from).addEdge(vertices.get(to), roadName, roadType, length);
+		vertices.get(from).addEdge(vertices.get(to), roadName, roadType, maxSpeed, length);
 		numEdges++;
 	}
 
@@ -230,18 +231,13 @@ public class MapGraph {
 		for (MapRoadNode node : vertices.values()) {
 			if (node.equals(start)) {
 				startNode = node;
-				node.setDistanceFromStartNode(0);
+				node.setTimeFromStartNode(0);
 			} else
-				node.setDistanceFromStartNode(Double.POSITIVE_INFINITY);
+				node.setTimeFromStartNode(Double.POSITIVE_INFINITY);
 			node.setStraightDistanceToGoalNode(0);
 		}
 
-		if (!aStarSearch(startNode, goal, parentMap, nodeSearched)) {
-			System.out.println("No path exists");
-			return null;
-		}
-
-		return constructPath(start, goal, parentMap);
+		return aStarSearch(startNode, goal, parentMap, nodeSearched) ? constructPath(start, goal, parentMap) : null;
 	}
 
 	/**
@@ -293,18 +289,13 @@ public class MapGraph {
 		for (MapRoadNode node : vertices.values()) {
 			if (node.equals(start)) {
 				startNode = node;
-				node.setDistanceFromStartNode(0);
+				node.setTimeFromStartNode(0);
 			} else
-				node.setDistanceFromStartNode(Double.POSITIVE_INFINITY);
+				node.setTimeFromStartNode(Double.POSITIVE_INFINITY);
 			node.setStraightDistanceToGoalNode(goal);
 		}
 
-		if (!aStarSearch(startNode, goal, parentMap, nodeSearched)) {
-			System.out.println("No path exists");
-			return null;
-		}
-
-		return constructPath(start, goal, parentMap);
+		return aStarSearch(startNode, goal, parentMap, nodeSearched) ? constructPath(start, goal, parentMap) : null;
 	}
 
 	private boolean bfsSearch(GeographicPoint start, GeographicPoint goal,
@@ -352,10 +343,11 @@ public class MapGraph {
 			for (MapRoadEdge neighborEdge : getNeighbors(current)) {
 				MapRoadNode neighbor = neighborEdge.getTo();
 				if (!visited.contains(neighbor)) {
-					double distance;
-					if ((distance = current.getDistanceFromStartNode() + neighborEdge.getLength()) < neighbor
-							.getDistanceFromStartNode()) {
-						neighbor.setDistanceFromStartNode(distance);
+					double time;
+					if ((time = current.getTimeFromStartNode()
+							+ neighborEdge.getLength() / neighborEdge.getMaxSpeed()) < neighbor
+									.getTimeFromStartNode()) {
+						neighbor.setTimeFromStartNode(time);
 						toExplore.add(neighbor);
 						parentMap.put(neighbor, current);
 					}

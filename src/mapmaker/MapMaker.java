@@ -38,6 +38,7 @@ public class MapMaker {
                 String street = elem.getJsonObject("tags").getString("name", "");
                 String type = elem.getJsonObject("tags").getString("highway", "");
                 String oneway = elem.getJsonObject("tags").getString("oneway", "no");
+                String maxSpeed = elem.getJsonObject("tags").getString("maxspeed", "-1");
                 List<JsonNumber> nodelist = elem.getJsonArray("nodes").getValuesAs(JsonNumber.class);
                 for (int i = 0; i < nodelist.size() - 1; i++) {
                     Location start = nodes.get(nodelist.get(i).intValue());
@@ -46,9 +47,9 @@ public class MapMaker {
                         continue;
                     }
 
-                    outfile.println("" + start + end + "\"" + street + "\" " + type);
+                    outfile.println("" + start + end + "\"" + street + "\" " + type + "\" " + maxSpeed);
                     if (oneway.equals("no")) {
-                        outfile.println("" + end + start + "\"" + street + "\" " + type);
+                        outfile.println("" + end + start + "\"" + street + "\" " + type + "\" " + maxSpeed);
                     }
                 }
             }
