@@ -110,16 +110,16 @@ public class RouteService {
 				List<geography.GeographicPoint> path = null;
 				if (toggle == RouteController.BFS)
 					path = markerManager.getDataSet().getGraph().bfs(start, end, nodeAccepter);
-				else if (toggle == RouteController.DIJ) {
-					path = markerManager.getDataSet().getGraph().dijkstra(start, end, nodeAccepter);
-					MapApp.showInfoAlert("Total trip time : ",
-							(int) Math.round(((MapRoadNode) path.get(path.size() - 1)).getTimeFromStartNode() * 60)
-									+ " mins");
-				} else if (toggle == RouteController.A_STAR) {
-					path = markerManager.getDataSet().getGraph().aStarSearch(start, end, nodeAccepter);
-					MapApp.showInfoAlert("Total trip time : ",
-							(int) Math.round(((MapRoadNode) path.get(path.size() - 1)).getTimeFromStartNode() * 60)
-									+ " mins");
+				else {
+					if (toggle == RouteController.DIJ) {
+						path = markerManager.getDataSet().getGraph().dijkstra(start, end, nodeAccepter);
+					} else if (toggle == RouteController.A_STAR) {
+						path = markerManager.getDataSet().getGraph().aStarSearch(start, end, nodeAccepter);
+					}
+					if (path != null)
+						MapApp.showInfoAlert("Estimated minimum total trip time : ",
+								(int) Math.round(((MapRoadNode) path.get(path.size() - 1)).getTimeFromStartNode() * 60)
+										+ " mins");
 				}
 
 				if (path == null) {

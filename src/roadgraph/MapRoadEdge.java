@@ -2,8 +2,12 @@ package roadgraph;
 
 /**
  * Class to represent roads as edges
+ * @author Aaron Nwabuoku
  */
 public class MapRoadEdge {
+	// Use Canada's urban statutory speed limit (50 km/h) as the default maxSpeed
+	public static final int DEFAULT_SPEED_LIMIT = 50;
+	public static final int DEFAULT_HIGHWAY_SPEED_LIMIT = 100;
 	private final MapRoadNode to;
 	private final String roadName;
 	private final String roadType;
@@ -14,9 +18,7 @@ public class MapRoadEdge {
 		this.to = to;
 		this.roadName = roadName;
 		this.roadType = roadType;
-
-		// Use Canada's urban statutory speed limit (50 km/h) as the default maxSpeed
-		this.maxSpeed = maxSpeed == -1 ? 50 : maxSpeed;
+		this.maxSpeed = maxSpeed == -1 ? DEFAULT_SPEED_LIMIT : maxSpeed;
 		this.length = length;
 	}
 

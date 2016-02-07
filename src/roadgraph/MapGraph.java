@@ -22,7 +22,7 @@ import geography.GeographicPoint;
 import util.GraphLoader;
 
 /**
- * @author UCSD MOOC development team and YOU
+ * @author UCSD MOOC development team and Aaron Nwabuoku
  * 
  *         A class which represents a graph of geographic locations Nodes in the
  *         graph are intersections between
@@ -234,7 +234,7 @@ public class MapGraph {
 				node.setTimeFromStartNode(0);
 			} else
 				node.setTimeFromStartNode(Double.POSITIVE_INFINITY);
-			node.setStraightDistanceToGoalNode(0);
+			node.setStraightLineTimeToGoalNodeAtHighwayLimit(0);
 		}
 
 		return aStarSearch(startNode, goal, parentMap, nodeSearched) ? constructPath(start, goal, parentMap) : null;
@@ -292,7 +292,7 @@ public class MapGraph {
 				node.setTimeFromStartNode(0);
 			} else
 				node.setTimeFromStartNode(Double.POSITIVE_INFINITY);
-			node.setStraightDistanceToGoalNode(goal);
+			node.setStraightLineTimeToGoalNodeAtHighwayLimit(goal);
 		}
 
 		return aStarSearch(startNode, goal, parentMap, nodeSearched) ? constructPath(start, goal, parentMap) : null;
@@ -306,7 +306,6 @@ public class MapGraph {
 
 		while (!toExplore.isEmpty()) {
 			GeographicPoint current = toExplore.remove();
-			visited.add(current);
 			nodeSearched.accept(current);
 			if (current.equals(goal))
 				return true;
@@ -314,6 +313,7 @@ public class MapGraph {
 			for (MapRoadEdge neighborEdge : getNeighbors(current)) {
 				MapRoadNode neighbor = neighborEdge.getTo();
 				if (!visited.contains(neighbor)) {
+					visited.add(neighbor);
 					toExplore.add(neighbor);
 					parentMap.put(neighbor, current);
 				}
